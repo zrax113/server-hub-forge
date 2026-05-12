@@ -4,8 +4,15 @@
   "outputDirectory": "dist/client",
   "framework": null,
   "rewrites": [
-    { "source": "/((?!.*\\.).*)", "destination": "/index.html" }
+    { "source": "/(.*)", "destination": "/api/server" }
   ],
+  "functions": {
+    "api/server.js": {
+      "runtime": "nodejs20.x",
+      "maxDuration": 30,
+      "includeFiles": "dist/server/**"
+    }
+  },
   "headers": [
     {
       "source": "/config.json",

@@ -93,12 +93,18 @@ export type ServerStatus = {
   hostname?: string;
 } | null;
 
-export function useServerStatus(apiTpl?: string, ip?: string, enabled = true): { data: ServerStatus; loading: boolean } {
+export function useServerStatus(
+  apiTpl?: string,
+  ip?: string,
+  enabled = true,
+  refreshMs = 60000,
+): { data: ServerStatus; loading: boolean } {
   const [data, setData] = useState<ServerStatus>(null);
   const [loading, setLoading] = useState(true);
   useEffect(() => {
     if (!enabled || !apiTpl || !ip) { setLoading(false); return; }
     let cancel = false;
+    setLoading(true);
     const url = apiTpl.replace("{ip}", encodeURIComponent(ip));
     const run = async () => {
       try {
@@ -117,9 +123,9 @@ export function useServerStatus(apiTpl?: string, ip?: string, enabled = true): {
       finally { if (!cancel) setLoading(false); }
     };
     run();
-    const id = setInterval(run, 60000);
+    const id = setInterval(run, Math.max(refreshMs, 15000));
     return () => { cancel = true; clearInterval(id); };
-  }, [apiTpl, ip, enabled]);
+  }, [apiTpl, ip, enabled, refreshMs]);
   return { data, loading };
 }
 

@@ -6,7 +6,8 @@
   },
   "server": {
     "ip": "play.purplecraft.net",
-    "statusApi": "https://api.mcsrvstat.us/2/{ip}"
+    "statusApi": "https://api.mcsrvstat.us/2/{ip}",
+    "statusRefreshMs": 45000
   },
   "links": {
     "discord": "https://discord.gg/minecraft",
