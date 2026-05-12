@@ -1,0 +1,47 @@
+{
+  "brand": {
+    "name": "PurpleCraft",
+    "tagline": "A modern Minecraft server built for adventure, community, and chaos.",
+    "logoEmoji": "⬢"
+  },
+  "server": {
+    "ip": "play.purplecraft.net",
+    "statusApi": "https://api.mcsrvstat.us/2/play.purplecraft.net"
+  },
+  "links": {
+    "discord": "https://discord.gg/minecraft",
+    "discordInviteCode": "minecraft",
+    "discordApi": "https://discord.com/api/v9/invites/{code}?with_counts=true",
+    "store": "https://store.purplecraft.net",
+    "patreon": "https://patreon.com/purplecraft"
+  },
+  "features": {
+    "store": true,
+    "patreon": false,
+    "serverStatus": true,
+    "discordCounter": true
+  },
+  "images": {
+    "hero": "/images/hero.jpg",
+    "store": "/images/store.jpg",
+    "stats": "/images/stats.jpg",
+    "sunset": "/images/sunset.jpg",
+    "features": [
+      { "src": "/images/feature-1.jpg", "title": "Survival Reimagined", "desc": "Custom mechanics, fresh biomes, and a thriving economy." },
+      { "src": "/images/feature-2.jpg", "title": "Epic Dungeons", "desc": "Tackle handcrafted trials with friends for legendary loot." },
+      { "src": "/images/feature-3.jpg", "title": "Endless Worlds", "desc": "Explore deep caves, lush peaks, and uncharted dimensions." }
+    ]
+  },
+  "highlights": [
+    { "title": "No Pay-to-Win", "desc": "Cosmetics and perks only. Skill always wins." },
+    { "title": "24/7 Uptime", "desc": "Hosted on premium hardware with daily backups." },
+    { "title": "Active Community", "desc": "Weekly events, builds, and tournaments." },
+    { "title": "Friendly Staff", "desc": "Real moderators, real fast responses." }
+  ],
+  "faq": [
+    { "q": "What version do you support?", "a": "We support the latest Minecraft Java Edition release with backwards compatibility down to 1.20." },
+    { "q": "Is there a whitelist?", "a": "No whitelist — just connect with the IP and start playing." },
+    { "q": "Are mods required?", "a": "No mods required. Optifine and shaders are fully supported but optional." },
+    { "q": "How do I report a player?", "a": "Use the /report command in-game or open a ticket in our Discord server." }
+  ]
+}
