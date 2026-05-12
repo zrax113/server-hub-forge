@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { Link } from "@tanstack/react-router";
 import { FAQ } from "@/components/FAQ";
 import { type SiteConfig } from "@/lib/config";
@@ -19,7 +20,7 @@ export function SiteLayout({
   children,
 }: {
   config: SiteConfig;
-  children: React.ReactNode;
+  children: ReactNode;
 }) {
   const nav = useMobileNav();
 
