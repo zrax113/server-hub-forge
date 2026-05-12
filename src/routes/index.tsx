@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { loadConfig, type SiteConfig } from "@/lib/config";
 import {
   ToastViewport, BackToTop, copyToClipboard,
-  useReveal, useServerStatus, useDiscordCount, useMobileNav,
+  useReveal, useServerStatus, useMobileNav,
 } from "@/lib/site-utils";
 import { FAQ } from "@/components/FAQ";
 
@@ -24,13 +24,15 @@ function Index() {
 
 function Site({ config }: { config: SiteConfig }) {
   useReveal();
-  const status = useServerStatus(config.server.statusApi, config.features.serverStatus);
-  const discordCount = useDiscordCount(config.links.discordApi, config.links.discordInviteCode, config.features.discordCounter);
+  const { data: status, loading: statusLoading } = useServerStatus(
+    config.server.statusApi, config.server.ip, config.features.serverStatus,
+  );
   const nav = useMobileNav();
 
   const sections = [
+    { id: "status", label: "Status" },
     { id: "features", label: "Features" },
-    { id: "stats", label: "Stats" },
+    { id: "stats", label: "Why us" },
     ...(config.features.store && config.links.store ? [{ id: "store", label: "Store" }] : []),
     { id: "faq", label: "FAQ" },
   ];
@@ -52,7 +54,7 @@ function Site({ config }: { config: SiteConfig }) {
           <div className="hidden md:flex items-center gap-3">
             {config.links.discord && (
               <a href={config.links.discord} target="_blank" rel="noreferrer" className="text-sm text-muted-foreground hover:text-foreground transition">
-                Discord {discordCount !== null && <span className="text-primary">· {discordCount.toLocaleString()}</span>}
+                Discord
               </a>
             )}
             {config.features.store && config.links.store && (
@@ -96,52 +98,112 @@ function Site({ config }: { config: SiteConfig }) {
             <div className="absolute inset-0 bg-gradient-to-b from-background/60 via-background/40 to-background" />
           </div>
         )}
-        <div className="max-w-7xl mx-auto px-6 pt-24 pb-32 relative">
-          <div className="max-w-3xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full glass text-xs font-mono mb-6 reveal">
-              <span className={`w-2 h-2 rounded-full ${status?.online ? "bg-green-400 animate-pulse-glow" : "bg-muted-foreground"}`} />
-              {config.features.serverStatus
-                ? status === null ? "Checking server…"
-                  : status.online ? `ONLINE · ${status.players?.online ?? 0}/${status.players?.max ?? "?"} players`
-                  : "OFFLINE"
-                : "LIVE"}
-            </div>
-            <h1 className="text-5xl md:text-7xl font-bold tracking-tight leading-[1.05] reveal">
-              Welcome to <span className="text-primary text-glow">{config.brand.name}</span>
-            </h1>
-            <p className="mt-6 text-lg md:text-xl text-muted-foreground max-w-2xl reveal">{config.brand.tagline}</p>
+        <div className="max-w-5xl mx-auto px-6 pt-24 pb-28 relative text-center">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full glass text-xs font-mono mb-6 reveal">
+            <span className={`w-2 h-2 rounded-full ${status?.online ? "bg-green-400 animate-pulse-glow" : "bg-muted-foreground"}`} />
+            {config.features.serverStatus
+              ? statusLoading ? "Checking server…"
+                : status?.online ? `ONLINE · ${status.players?.online ?? 0}/${status.players?.max ?? "?"} players`
+                : "OFFLINE"
+              : "LIVE"}
+          </div>
+          <h1 className="text-5xl md:text-7xl font-bold tracking-tight leading-[1.05] reveal">
+            Welcome to <span className="text-primary text-glow">{config.brand.name}</span>
+          </h1>
+          <p className="mt-6 text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto reveal">{config.brand.tagline}</p>
 
-            <div className="mt-10 flex flex-col sm:flex-row gap-4 reveal">
-              <button
-                onClick={() => copyToClipboard(config.server.ip)}
-                className="group glass glow-ring rounded-xl px-5 py-4 flex items-center gap-4 hover:scale-[1.02] transition"
-              >
-                <div className="text-left">
-                  <div className="text-xs text-muted-foreground font-mono uppercase tracking-wider">Server IP</div>
-                  <div className="font-mono text-lg text-primary">{config.server.ip}</div>
-                </div>
-                <span className="text-primary font-semibold text-sm border-l border-border pl-4 group-hover:translate-x-1 transition">COPY</span>
-              </button>
-              {config.features.store && config.links.store && (
-                <a href={config.links.store} target="_blank" rel="noreferrer"
-                   className="px-6 py-4 rounded-xl bg-primary text-primary-foreground font-semibold flex items-center justify-center gap-2 hover:opacity-90 transition glow-ring animate-pulse-glow">
-                  Visit Store →
-                </a>
-              )}
-              {config.features.patreon && config.links.patreon && (
-                <a href={config.links.patreon} target="_blank" rel="noreferrer"
-                   className="px-6 py-4 rounded-xl glass font-semibold flex items-center justify-center hover:text-primary transition">
-                  Patreon
-                </a>
-              )}
-            </div>
+          <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center reveal">
+            <button
+              onClick={() => copyToClipboard(config.server.ip)}
+              className="group glass glow-ring rounded-xl px-5 py-4 flex items-center gap-4 hover:scale-[1.02] transition"
+            >
+              <div className="text-left">
+                <div className="text-xs text-muted-foreground font-mono uppercase tracking-wider">Server IP</div>
+                <div className="font-mono text-lg text-primary">{config.server.ip}</div>
+              </div>
+              <span className="text-primary font-semibold text-sm border-l border-border pl-4 group-hover:translate-x-1 transition">COPY</span>
+            </button>
+            {config.features.store && config.links.store && (
+              <a href={config.links.store} target="_blank" rel="noreferrer"
+                 className="px-6 py-4 rounded-xl bg-primary text-primary-foreground font-semibold flex items-center justify-center gap-2 hover:opacity-90 transition glow-ring animate-pulse-glow">
+                Visit Store →
+              </a>
+            )}
+            {config.features.patreon && config.links.patreon && (
+              <a href={config.links.patreon} target="_blank" rel="noreferrer"
+                 className="px-6 py-4 rounded-xl glass font-semibold flex items-center justify-center hover:text-primary transition">
+                Patreon
+              </a>
+            )}
           </div>
         </div>
       </section>
 
+      {/* SERVER STATUS CARD */}
+      {config.features.serverStatus && (
+        <section id="status" className="max-w-3xl mx-auto px-6 py-20">
+          <div className="text-center mb-10 reveal">
+            <div className="text-primary font-mono text-xs uppercase tracking-widest mb-3">// Live status</div>
+            <h2 className="text-4xl md:text-5xl font-bold">Server status</h2>
+          </div>
+          <div className="reveal glass glow-ring rounded-2xl p-8 text-center">
+            {statusLoading ? (
+              <div className="text-muted-foreground">Pinging {config.server.ip}…</div>
+            ) : status?.online ? (
+              <div className="flex flex-col items-center gap-6">
+                <div className="flex items-center gap-4">
+                  {status.icon && (
+                    <img src={status.icon} alt="" className="w-16 h-16 rounded-lg glow-ring" />
+                  )}
+                  <div className="text-left">
+                    <div className="flex items-center gap-2 text-green-400 font-mono text-sm">
+                      <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse-glow" />
+                      ONLINE
+                    </div>
+                    <div className="font-mono text-lg text-primary">{config.server.ip}</div>
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-6 w-full max-w-md">
+                  <div className="glass rounded-xl p-4">
+                    <div className="text-xs text-muted-foreground font-mono uppercase tracking-wider mb-1">Players</div>
+                    <div className="text-2xl font-bold text-primary">
+                      {status.players?.online ?? 0}<span className="text-muted-foreground text-base">/{status.players?.max ?? "?"}</span>
+                    </div>
+                  </div>
+                  <div className="glass rounded-xl p-4">
+                    <div className="text-xs text-muted-foreground font-mono uppercase tracking-wider mb-1">Version</div>
+                    <div className="text-lg font-bold text-primary truncate">{status.version ?? "—"}</div>
+                  </div>
+                </div>
+                {status.motd && status.motd.length > 0 && (
+                  <div className="font-mono text-sm text-muted-foreground whitespace-pre-line">
+                    {status.motd.join("\n")}
+                  </div>
+                )}
+                <button
+                  onClick={() => copyToClipboard(config.server.ip)}
+                  className="px-5 py-2 rounded-lg bg-primary text-primary-foreground font-semibold hover:opacity-90 transition"
+                >
+                  Copy IP
+                </button>
+              </div>
+            ) : (
+              <div className="flex flex-col items-center gap-3">
+                <div className="flex items-center gap-2 text-muted-foreground font-mono text-sm">
+                  <span className="w-2 h-2 rounded-full bg-muted-foreground" />
+                  OFFLINE
+                </div>
+                <div className="font-mono text-primary">{config.server.ip}</div>
+                <div className="text-sm text-muted-foreground">We can't reach the server right now. Try again shortly.</div>
+              </div>
+            )}
+          </div>
+        </section>
+      )}
+
       {/* FEATURES */}
       <section id="features" className="max-w-7xl mx-auto px-6 py-24">
-        <div className="max-w-2xl mb-14 reveal">
+        <div className="max-w-2xl mx-auto mb-14 text-center reveal">
           <div className="text-primary font-mono text-xs uppercase tracking-widest mb-3">// Features</div>
           <h2 className="text-4xl md:text-5xl font-bold">Built for players who want more.</h2>
         </div>
@@ -152,7 +214,7 @@ function Site({ config }: { config: SiteConfig }) {
                 <img src={f.src} alt={f.title} loading="lazy"
                      className="w-full h-full object-cover group-hover:scale-105 transition duration-700" />
               </div>
-              <div className="p-6">
+              <div className="p-6 text-center">
                 <h3 className="text-xl font-bold mb-2">{f.title}</h3>
                 <p className="text-muted-foreground text-sm">{f.desc}</p>
               </div>

@@ -83,45 +83,44 @@ export function BackToTop() {
   );
 }
 
-// ---------- Server status ----------
-export function useServerStatus(api?: string, enabled = true) {
-  const [data, setData] = useState<{ online: boolean; players?: { online: number; max: number } } | null>(null);
-  useEffect(() => {
-    if (!enabled || !api) return;
-    let cancel = false;
-    const fetchIt = async () => {
-      try {
-        const r = await fetch(api);
-        const j = await r.json();
-        if (!cancel) setData({ online: !!j.online, players: j.players });
-      } catch { if (!cancel) setData({ online: false }); }
-    };
-    fetchIt();
-    const id = setInterval(fetchIt, 60000);
-    return () => { cancel = true; clearInterval(id); };
-  }, [api, enabled]);
-  return data;
-}
+// ---------- Server status (mcsrvstat.us v2) ----------
+export type ServerStatus = {
+  online: boolean;
+  players?: { online: number; max: number };
+  version?: string;
+  motd?: string[];
+  icon?: string;
+  hostname?: string;
+} | null;
 
-// ---------- Discord counter ----------
-export function useDiscordCount(apiTpl?: string, code?: string, enabled = true) {
-  const [count, setCount] = useState<number | null>(null);
+export function useServerStatus(apiTpl?: string, ip?: string, enabled = true): { data: ServerStatus; loading: boolean } {
+  const [data, setData] = useState<ServerStatus>(null);
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
-    if (!enabled || !apiTpl || !code) return;
+    if (!enabled || !apiTpl || !ip) { setLoading(false); return; }
     let cancel = false;
-    const url = apiTpl.replace("{code}", code);
+    const url = apiTpl.replace("{ip}", encodeURIComponent(ip));
     const run = async () => {
       try {
         const r = await fetch(url);
         const j = await r.json();
-        if (!cancel) setCount(j.approximate_member_count ?? null);
-      } catch { /* graceful */ }
+        if (cancel) return;
+        setData({
+          online: !!j.online,
+          players: j.players ? { online: j.players.online ?? 0, max: j.players.max ?? 0 } : undefined,
+          version: j.version,
+          motd: j.motd?.clean,
+          icon: j.icon,
+          hostname: j.hostname,
+        });
+      } catch { if (!cancel) setData({ online: false }); }
+      finally { if (!cancel) setLoading(false); }
     };
     run();
-    const id = setInterval(run, 120000);
+    const id = setInterval(run, 60000);
     return () => { cancel = true; clearInterval(id); };
-  }, [apiTpl, code, enabled]);
-  return count;
+  }, [apiTpl, ip, enabled]);
+  return { data, loading };
 }
 
 // ---------- Mobile nav ----------
