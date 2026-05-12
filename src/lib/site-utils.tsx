@@ -83,45 +83,31 @@ export function BackToTop() {
   );
 }
 
-// ---------- Server status ----------
-export function useServerStatus(api?: string, enabled = true) {
+// ---------- Server status (mcstatus.io v2 compatible, also tolerates mcsrvstat) ----------
+export function useServerStatus(apiTpl?: string, ip?: string, enabled = true) {
   const [data, setData] = useState<{ online: boolean; players?: { online: number; max: number } } | null>(null);
   useEffect(() => {
-    if (!enabled || !api) return;
+    if (!enabled || !apiTpl || !ip) return;
     let cancel = false;
-    const fetchIt = async () => {
-      try {
-        const r = await fetch(api);
-        const j = await r.json();
-        if (!cancel) setData({ online: !!j.online, players: j.players });
-      } catch { if (!cancel) setData({ online: false }); }
-    };
-    fetchIt();
-    const id = setInterval(fetchIt, 60000);
-    return () => { cancel = true; clearInterval(id); };
-  }, [api, enabled]);
-  return data;
-}
-
-// ---------- Discord counter ----------
-export function useDiscordCount(apiTpl?: string, code?: string, enabled = true) {
-  const [count, setCount] = useState<number | null>(null);
-  useEffect(() => {
-    if (!enabled || !apiTpl || !code) return;
-    let cancel = false;
-    const url = apiTpl.replace("{code}", code);
+    const url = apiTpl.replace("{ip}", encodeURIComponent(ip));
     const run = async () => {
       try {
         const r = await fetch(url);
         const j = await r.json();
-        if (!cancel) setCount(j.approximate_member_count ?? null);
-      } catch { /* graceful */ }
+        const online = !!j.online;
+        const players = j.players
+          ? { online: j.players.online ?? 0, max: j.players.max ?? 0 }
+          : undefined;
+        if (!cancel) setData({ online, players });
+      } catch {
+        if (!cancel) setData({ online: false });
+      }
     };
     run();
-    const id = setInterval(run, 120000);
+    const id = setInterval(run, 60000);
     return () => { cancel = true; clearInterval(id); };
-  }, [apiTpl, code, enabled]);
-  return count;
+  }, [apiTpl, ip, enabled]);
+  return data;
 }
 
 // ---------- Mobile nav ----------
