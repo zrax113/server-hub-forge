@@ -5,11 +5,12 @@ import { HeroSection, SiteLayout, useSiteEffects } from "@/components/site-shell
 export const Route = createFileRoute("/")({
   loader: () => loadConfig(),
   head: ({ loaderData }) => ({
+    const config = loaderData ?? { brand: { name: "Minecraft Server", tagline: "Join the server." } };
     meta: [
-      { title: `${loaderData.brand.name} — Minecraft Server` },
-      { name: "description", content: loaderData.brand.tagline },
-      { property: "og:title", content: `${loaderData.brand.name} — Minecraft Server` },
-      { property: "og:description", content: loaderData.brand.tagline },
+      { title: `${config.brand.name} — Minecraft Server` },
+      { name: "description", content: config.brand.tagline },
+      { property: "og:title", content: `${config.brand.name} — Minecraft Server` },
+      { property: "og:description", content: config.brand.tagline },
     ],
   }),
   component: HomePage,
