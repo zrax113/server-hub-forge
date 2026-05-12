@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as StatusRouteImport } from './routes/status'
 import { Route as FeaturesRouteImport } from './routes/features'
+import { Route as FaqRouteImport } from './routes/faq'
 import { Route as IndexRouteImport } from './routes/index'
 
 const StatusRoute = StatusRouteImport.update({
@@ -23,6 +24,11 @@ const FeaturesRoute = FeaturesRouteImport.update({
   path: '/features',
   getParentRoute: () => rootRouteImport,
 } as any)
+const FaqRoute = FaqRouteImport.update({
+  id: '/faq',
+  path: '/faq',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -31,30 +37,34 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/faq': typeof FaqRoute
   '/features': typeof FeaturesRoute
   '/status': typeof StatusRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/faq': typeof FaqRoute
   '/features': typeof FeaturesRoute
   '/status': typeof StatusRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/faq': typeof FaqRoute
   '/features': typeof FeaturesRoute
   '/status': typeof StatusRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/features' | '/status'
+  fullPaths: '/' | '/faq' | '/features' | '/status'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/features' | '/status'
-  id: '__root__' | '/' | '/features' | '/status'
+  to: '/' | '/faq' | '/features' | '/status'
+  id: '__root__' | '/' | '/faq' | '/features' | '/status'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  FaqRoute: typeof FaqRoute
   FeaturesRoute: typeof FeaturesRoute
   StatusRoute: typeof StatusRoute
 }
@@ -75,6 +85,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FeaturesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/faq': {
+      id: '/faq'
+      path: '/faq'
+      fullPath: '/faq'
+      preLoaderRoute: typeof FaqRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -87,6 +104,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  FaqRoute: FaqRoute,
   FeaturesRoute: FeaturesRoute,
   StatusRoute: StatusRoute,
 }
