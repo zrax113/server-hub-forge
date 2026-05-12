@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+
 export interface SiteConfig {
   brand: { name: string; tagline: string; logoEmoji?: string };
   server: { ip: string; statusApi?: string; statusRefreshMs?: number };
@@ -109,4 +111,26 @@ export async function loadConfig(): Promise<SiteConfig> {
 
   cached = mergeConfig(undefined);
   return cached;
+}
+
+export function useSiteConfig() {
+  const [config, setConfig] = useState<SiteConfig>(fallbackConfig);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+    loadConfig()
+      .then((next) => {
+        if (!cancelled) setConfig(next);
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  return { config, loading };
 }
