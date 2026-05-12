@@ -6,20 +6,17 @@
   },
   "server": {
     "ip": "play.purplecraft.net",
-    "statusApi": "https://api.mcsrvstat.us/2/play.purplecraft.net"
+    "statusApi": "https://api.mcsrvstat.us/2/{ip}"
   },
   "links": {
     "discord": "https://discord.gg/minecraft",
-    "discordInviteCode": "minecraft",
-    "discordApi": "https://discord.com/api/v9/invites/{code}?with_counts=true",
     "store": "https://store.purplecraft.net",
     "patreon": "https://patreon.com/purplecraft"
   },
   "features": {
     "store": true,
     "patreon": false,
-    "serverStatus": true,
-    "discordCounter": true
+    "serverStatus": true
   },
   "images": {
     "hero": "/images/hero.jpg",

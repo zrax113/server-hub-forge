@@ -1,8 +1,8 @@
 export interface SiteConfig {
   brand: { name: string; tagline: string; logoEmoji?: string };
   server: { ip: string; statusApi?: string };
-  links: { discord?: string; discordInviteCode?: string; discordApi?: string; store?: string; patreon?: string };
-  features: { store: boolean; patreon: boolean; serverStatus: boolean; discordCounter: boolean };
+  links: { discord?: string; store?: string; patreon?: string };
+  features: { store: boolean; patreon: boolean; serverStatus: boolean };
   images: {
     hero?: string;
     store?: string;
