@@ -5,14 +5,42 @@
   "framework": null,
   "cleanUrls": true,
   "trailingSlash": false,
-  "rewrites": [
-    { "source": "/(.*)", "destination": "/index.html" }
+  "redirects": [
+    {
+      "source": "/api",
+      "destination": "/api/catch-all",
+      "permanent": false
+    }
   ],
+  "rewrites": [
+    { "source": "/assets/(.*)", "destination": "/assets/$1" },
+    { "source": "/config.json", "destination": "/config.json" },
+    { "source": "/.*", "destination": "/index.html" }
+  ],
+  "routes": [
+    { "src": "/assets/(.*)", "dest": "/assets/$1" },
+    { "src": "/config.json", "dest": "/config.json" },
+    { "src": "/(.*)", "methods": ["GET"], "dest": "/.next/index.html" }
+  ],
+  "functions": {
+    "api/catch-all.ts": {
+      "memory": 128,
+      "maxDuration": 10
+    }
+  },
   "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "X-Frame-Options", "value": "SAMEORIGIN" },
+        { "key": "X-XSS-Protection", "value": "1; mode=block" }
+      ]
+    },
     {
       "source": "/config.json",
       "headers": [
-        { "key": "Cache-Control", "value": "no-cache" }
+        { "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate" }
       ]
     },
     {

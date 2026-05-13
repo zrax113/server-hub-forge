@@ -15,6 +15,19 @@ export default defineConfig({
   vite: {
     build: {
       outDir: "dist/client",
+      emptyOutDir: true,
+      sourcemap: false,
+      minify: "terser",
+      rollupOptions: {
+        input: "public/index.html",
+        output: {
+          entryFileNames: "assets/[name]-[hash].js",
+          chunkFileNames: "assets/[name]-[hash].js",
+          assetFileNames: "assets/[name]-[hash][extname]",
+        },
+      },
     },
+    publicDir: "public",
   },
 });
+
